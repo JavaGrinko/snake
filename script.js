@@ -14,8 +14,8 @@ window.onload = () => {
     let canvas = document.getElementById("canvas");
     game = canvas.getContext("2d");
     height = canvas.clientHeight;
-    width = height;
-    canvas.width = width * 1.5;
+    width = height  * 1.5;
+    canvas.width = width;
     canvas.height = height;
     setInterval(() => {
         moveSnake()
