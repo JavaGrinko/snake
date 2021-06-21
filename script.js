@@ -6,19 +6,11 @@ const columns = 10;
 const snake = [{
     row: 5,
     column: 0
-}, {
-    row: 5,
-    column: 1
-}, {
-    row: 5,
-    column: 2
-}, {
-    row: 5,
-    column: 3
 }];
 let direction = "RIGHT";
 let game;
 let interval;
+let food = generateFood();
 
 window.onload = () => {
     console.log("Скрипты подключены");
@@ -34,9 +26,24 @@ window.onload = () => {
     }, 1000);
 }
 
+function generateFood() {
+    let row = Math.round(Math.random() * (rows - 1));
+    let column = Math.round(Math.random() * (columns - 1));
+    return { row, column }
+}
+
+function renderFood() {
+    let size = height / rows;
+    game.fillStyle = "green";
+    let y = food.row * size;
+    let x = food.column * size;
+    game.fillRect(x, y, size, size);
+}
+
 function render() {
     game.clearRect(0, 0, width, height);
     renderSnake();
+    renderFood();
 }
 
 function renderSnake() {
@@ -65,17 +72,25 @@ function moveSnake() {
             addBody(head.row + 1, head.column);
             break;
     }
-    snake.shift(); // удаляем хвостовой элемент
 }
 
 function addBody(row, column) {
     if (isCellFill(row, column)) {
         gameover();
     }
+    if (isFood(row, column)) {
+        food = generateFood();
+    } else {
+        snake.shift();
+    }
     snake.push({
         row,
         column
     });
+}
+
+function isFood(row, column) {
+    return food.row === row && food.column === column;
 }
 
 function isCellFill(row, column) {
