@@ -1,7 +1,7 @@
 let height;
 let width;
 const rows = 10;
-const columns = 10;
+const columns = 15;
 // для теста длина змеи = 4
 const snake = [{
     row: 5,
@@ -10,7 +10,16 @@ const snake = [{
 let direction = "RIGHT";
 let game;
 let interval;
+let intervalTimeout = 1000;
 let food = generateFood();
+
+function changeInterval() {
+    clearInterval(interval);
+    interval = setInterval(() => {
+        moveSnake()
+        render();
+    }, intervalTimeout);
+}
 
 window.onload = () => {
     console.log("Скрипты подключены");
@@ -20,10 +29,8 @@ window.onload = () => {
     width = height  * 1.5;
     canvas.width = width;
     canvas.height = height;
-    interval = setInterval(() => {
-        moveSnake()
-        render();
-    }, 1000);
+    render();
+    changeInterval();
 }
 
 function generateFood() {
@@ -75,11 +82,17 @@ function moveSnake() {
 }
 
 function addBody(row, column) {
+    if (row === -1) row = rows - 1;
+    if (row === rows) row = 0;
+    if (column === -1) column = columns - 1;
+    if (column === columns) column = 0;
     if (isCellFill(row, column)) {
         gameover();
     }
     if (isFood(row, column)) {
         food = generateFood();
+        intervalTimeout -= intervalTimeout * 0.1;
+        changeInterval();
     } else {
         snake.shift();
     }
