@@ -2,7 +2,6 @@ let height;
 let width;
 const rows = 10;
 const columns = 15;
-// для теста длина змеи = 4
 const snake = [{
     row: 5,
     column: 0
@@ -10,12 +9,13 @@ const snake = [{
 let direction = "RIGHT";
 let game;
 let interval;
-let intervalTimeout = 1000;
+let intervalTimeout = 300;
 let food = generateFood();
 let foodImage = new Image();
 foodImage.src = "images/apple.png";
 let snakeImage = new Image();
 snakeImage.src = "images/snake.png";
+let time = 0;
 
 function changeInterval() {
     clearInterval(interval);
@@ -45,7 +45,6 @@ function generateFood() {
 
 function renderFood() {
     let size = height / rows;
-    game.fillStyle = "green";
     let y = food.row * size;
     let x = food.column * size;
     game.drawImage(foodImage, x, y, size, size);
@@ -55,7 +54,17 @@ function render() {
     game.clearRect(0, 0, width, height);
     renderSnake();
     renderFood();
+    renderTimer();
 }
+
+function renderTimer() {
+    game.font = "48px serif";
+    game.fillStyle = "cyan";
+    game.fillText("Прошло секунд: " + time, 50, 50);
+    
+}
+
+setInterval(() => time++, 1000)
 
 function renderHead() {
     let size = height / rows;
@@ -82,44 +91,18 @@ function renderHead() {
     } 
 }
 
-function renderTail() {
-    let size = height / rows;
-    let s = snake[0];
-    let y = s.row * size;
-    let x = s.column * size;
-    switch (direction) {
-        case "UP":
-            // https://developer.mozilla.org/ru/docs/Web/API/CanvasRenderingContext2D/drawImage
-            game.drawImage(snakeImage, 190, 128, 63, 63, x, y, size, size);
-            break;
-        case "DOWN":
-            // https://developer.mozilla.org/ru/docs/Web/API/CanvasRenderingContext2D/drawImage
-            game.drawImage(snakeImage, 257, 192, 63, 63, x, y, size, size);
-            break;
-        case "RIGHT":
-            // https://developer.mozilla.org/ru/docs/Web/API/CanvasRenderingContext2D/drawImage
-            game.drawImage(snakeImage, 256, 128, 63, 63, x, y, size, size);
-            break;
-        case "LEFT":
-            // https://developer.mozilla.org/ru/docs/Web/API/CanvasRenderingContext2D/drawImage
-            game.drawImage(snakeImage, 190, 192, 63, 63, x, y, size, size);
-            break;
-    }
-}
-
 function renderSnake() {
     let size = height / rows;
-    for (let i = 1; i < snake.length - 1; i++) { // в цикл не попадут первый и последний элемент
+    for (let i = 0; i < snake.length - 1; i++) { // в цикл не попадут первый и последний элемент
         let s = snake[i];
-        game.fillStyle = "red";
+        game.fillStyle = "blue";
         let y = s.row * size;
         let x = s.column * size;
-        game.fillRect(x, y, size, size);
+        game.beginPath();
+        game.arc(x + size / 2, y + size / 2, size / 2, 0, 2 * Math.PI);
+        game.fill();
     }
     renderHead();
-    if (snake.length > 1) {
-        renderTail();
-    }
 }
 
 function moveSnake() {
