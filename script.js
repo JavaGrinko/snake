@@ -10,12 +10,21 @@ let direction = "RIGHT";
 let game;
 let interval;
 let intervalTimeout = 300;
+let foodImages = [];
+loadFoodImages("images/apple.png");
+loadFoodImages("images/tomato.png");
+loadFoodImages("images/orange.png");
 let food = generateFood();
-let foodImage = new Image();
-foodImage.src = "images/apple.png";
 let snakeImage = new Image();
 snakeImage.src = "images/snake.png";
 let time = 0;
+let fruitsCount = 0;
+
+function loadFoodImages(url) {
+    let image = new Image();
+    image.src = url;
+    foodImages.push(image);
+}
 
 function changeInterval() {
     clearInterval(interval);
@@ -40,14 +49,17 @@ window.onload = () => {
 function generateFood() {
     let row = Math.round(Math.random() * (rows - 1));
     let column = Math.round(Math.random() * (columns - 1));
-    return { row, column }
+    let imageIndex = Math.round(Math.random() * (foodImages.length - 1));
+    console.log(imageIndex);
+    let image = foodImages[imageIndex];
+    return { row, column, image }
 }
 
 function renderFood() {
     let size = height / rows;
     let y = food.row * size;
     let x = food.column * size;
-    game.drawImage(foodImage, x, y, size, size);
+    game.drawImage(food.image, x, y, size, size);
 }
 
 function render() {
@@ -58,10 +70,7 @@ function render() {
 }
 
 function renderTimer() {
-    game.font = "48px serif";
-    game.fillStyle = "cyan";
-    game.fillText("Прошло секунд: " + time, 50, 50);
-    
+    document.getElementById("time").innerText = time + " сек";
 }
 
 setInterval(() => time++, 1000)
@@ -132,9 +141,7 @@ function addBody(row, column) {
         gameover();
     }
     if (isFood(row, column)) {
-        food = generateFood();
-        intervalTimeout -= intervalTimeout * 0.1;
-        changeInterval();
+        eatFood();
     } else {
         snake.shift();
     }
@@ -142,6 +149,14 @@ function addBody(row, column) {
         row,
         column
     });
+}
+
+function eatFood() {
+    fruitsCount++;
+    document.getElementById("fruits-count").innerText = fruitsCount + " шт";
+    food = generateFood();
+    intervalTimeout -= intervalTimeout * 0.1;
+    changeInterval();
 }
 
 function isFood(row, column) {
