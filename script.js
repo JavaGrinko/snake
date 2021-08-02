@@ -19,6 +19,22 @@ let snakeImage = new Image();
 snakeImage.src = "images/snake.png";
 let time = 0;
 let fruitsCount = 0;
+const levels = [{
+    fruitsCount: 0,
+    background: "images/bg.jpg"
+}, {
+    fruitsCount: 3,
+    background: "images/bg2.jpeg"
+}, {
+    fruitsCount: 60,
+    background: "images/bg3.jpg"
+}, {
+    fruitsCount: 90,
+    background: "images/bg4.jpg"
+}, {
+    fruitsCount: 120,
+    background: "images/bg5.jpg"
+}];
 
 function loadFoodImages(url) {
     let image = new Image();
@@ -64,9 +80,28 @@ function renderFood() {
 
 function render() {
     game.clearRect(0, 0, width, height);
+    renderLevel();
     renderSnake();
     renderFood();
     renderTimer();
+}
+
+function renderLevel() {
+    for (let i = levels.length - 1; i >= 0; i--) {
+        if (fruitsCount >= levels[i].fruitsCount) {
+            let newBackground = levels[i].background;
+            document.querySelector(".wrapper").style["background-image"] = "url(" + newBackground + ")";
+            setActiveLevel(i); 
+            return;
+        }
+    }
+}
+
+function setActiveLevel(level) {
+    let preLevel = document.querySelector(`.level:nth-child(${level + 1})`);
+    if (preLevel) preLevel.classList.remove("level-active");
+    let activeLevel = document.querySelector(`.level:nth-child(${level + 2})`);
+    if (activeLevel) activeLevel.classList.add("level-active");
 }
 
 function renderTimer() {
