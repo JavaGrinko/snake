@@ -19,6 +19,35 @@ let snakeImage = new Image();
 snakeImage.src = "images/snake.png";
 let time = 0;
 let fruitsCount = 0;
+let hints = [];
+let level = 0;
+
+function addHint(message, color, x, y) {
+    hints.push({
+        message,
+        color,
+        x,
+        y,
+        alpha: 1
+    });
+}
+
+function renderHints() {
+    for (let hint of hints) {
+        hint.y -= 10;
+        hint.alpha -= 0.1;
+        if (hint.alpha <= 0) {
+            hints = hints.filter(it => it !== hint);
+            continue;
+        }
+        game.globalAlpha = hint.alpha;
+        game.fillStyle = hint.color;
+        game.font = "bold 30px PixelFont";
+        game.fillText(hint.message, hint.x, hint.y);
+        game.globalAlpha = 1;
+    }
+}
+
 const levels = [{
     fruitsCount: 0,
     background: "images/bg.jpg"
@@ -84,6 +113,7 @@ function render() {
     renderSnake();
     renderFood();
     renderTimer();
+    renderHints();
 }
 
 function renderLevel() {
@@ -91,7 +121,11 @@ function renderLevel() {
         if (fruitsCount >= levels[i].fruitsCount) {
             let newBackground = levels[i].background;
             document.querySelector(".wrapper").style["background-image"] = "url(" + newBackground + ")";
-            setActiveLevel(i); 
+            setActiveLevel(i);
+            if (level != i) {
+                addHint('Новый уровень!', '#00ff00', width / 2 - 100, height / 2);
+                level = i;
+            }
             return;
         }
     }
@@ -187,6 +221,10 @@ function addBody(row, column) {
 }
 
 function eatFood() {
+    let size = height / rows;
+    let y = food.row * size;
+    let x = food.column * size;
+    addHint("Ням-ням", '#ff0000', x, y);
     fruitsCount++;
     document.getElementById("fruits-count").innerText = fruitsCount + " шт";
     food = generateFood();
