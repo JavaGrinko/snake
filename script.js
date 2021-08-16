@@ -14,7 +14,10 @@ let foodImages = [];
 loadFoodImages("images/apple.png");
 loadFoodImages("images/tomato.png");
 loadFoodImages("images/orange.png");
+let badFoodImages = [];
+loadBadFoodImages("images/badfood.png");
 let food = generateFood();
+let badFood;
 let snakeImage = new Image();
 snakeImage.src = "images/snake.png";
 let time = 0;
@@ -71,6 +74,13 @@ function loadFoodImages(url) {
     foodImages.push(image);
 }
 
+
+function loadBadFoodImages(url) {
+    let image = new Image();
+    image.src = url;
+    badFoodImages.push(image);
+}
+
 function changeInterval() {
     clearInterval(interval);
     interval = setInterval(() => {
@@ -91,11 +101,22 @@ window.onload = () => {
     changeInterval();
 }
 
+function generateBadFood() {
+    let row = Math.round(Math.random() * (rows - 1));
+    let column = Math.round(Math.random() * (columns - 1));
+    let imageIndex = Math.round(Math.random() * (badFoodImages.length - 1));
+    let image = badFoodImages[imageIndex];
+    return { row, column, image }
+}
+
+setInterval(() => {
+    badFood = generateBadFood();
+}, 5000);
+
 function generateFood() {
     let row = Math.round(Math.random() * (rows - 1));
     let column = Math.round(Math.random() * (columns - 1));
     let imageIndex = Math.round(Math.random() * (foodImages.length - 1));
-    console.log(imageIndex);
     let image = foodImages[imageIndex];
     return { row, column, image }
 }
@@ -107,11 +128,20 @@ function renderFood() {
     game.drawImage(food.image, x, y, size, size);
 }
 
+function renderBadFood() {
+    if (!badFood) return; // если нет плохой еды, то не рендерим
+    let size = height / rows;
+    let y = badFood.row * size;
+    let x = badFood.column * size;
+    game.drawImage(badFood.image, x, y, size, size);
+}
+
 function render() {
     game.clearRect(0, 0, width, height);
     renderLevel();
     renderSnake();
     renderFood();
+    renderBadFood();
     renderTimer();
     renderHints();
 }
@@ -209,6 +239,9 @@ function addBody(row, column) {
     if (isCellFill(row, column)) {
         gameover();
     }
+    if (isBadFood(row, column)) {
+        poisoning();
+    }
     if (isFood(row, column)) {
         eatFood();
     } else {
@@ -218,6 +251,15 @@ function addBody(row, column) {
         row,
         column
     });
+}
+
+function poisoning() {
+    if (!badFood) return;
+    let size = height / rows;
+    let y = badFood.row * size;
+    let x = badFood.column * size;
+    addHint("Фуууу, бяка", '#ff0000', x, y);
+    badFood = generateBadFood();
 }
 
 function eatFood() {
@@ -234,6 +276,10 @@ function eatFood() {
 
 function isFood(row, column) {
     return food.row === row && food.column === column;
+}
+
+function isBadFood(row, column) {
+   return badFood && badFood.row === row && badFood.column === column;
 }
 
 function isCellFill(row, column) {
