@@ -98,8 +98,22 @@ window.onload = () => {
     canvas.width = width;
     canvas.height = height;
     render();
-    changeInterval();
+    let input = document.getElementById("name");
+    let error = document.getElementById("error");
+    let playerName = document.getElementById("player-name");
+    document.getElementById("start").onclick = () => {
+        let name = input.value;
+        if (!name || name.length < 0) {
+            error.innerText = "Имя пустое, введите имя";
+            error.style['display'] = 'block';
+        } else {
+            playerName.innerText = "Игрок: " + input.value;
+            changeInterval();
+            document.getElementById("registration").style["display"] = "none";
+        }
+    }
 }
+
 
 function generateBadFood() {
     let row = Math.round(Math.random() * (rows - 1));

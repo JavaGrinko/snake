@@ -82,3 +82,46 @@ html, body {
 .panel-value {
     font-size: 32px;
 }
+
+.container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dialog {
+    width: 300px;
+    background: url(images/wood.jpeg);
+    background-size: 100% 100%;
+    color: white;
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    margin-right: 8px;
+}
+
+.start-button {
+    margin-top: 8px;
+}
+
+.error {
+    color: red;
+    display: none;
+}
+
+.player-name {
+    position: absolute;
+    color: white;
+    top: 110px;
+    left: 16px;
+}
