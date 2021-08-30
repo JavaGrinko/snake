@@ -120,7 +120,12 @@ function generateBadFood() {
     let column = Math.round(Math.random() * (columns - 1));
     let imageIndex = Math.round(Math.random() * (badFoodImages.length - 1));
     let image = badFoodImages[imageIndex];
-    return { row, column, image }
+    if (checkPosition(row, column)) {
+        return { row, column, image }
+    } else {
+        console.log('место занято, еще одна попытка');
+        return generateBadFood();
+    }
 }
 
 setInterval(() => {
@@ -132,7 +137,22 @@ function generateFood() {
     let column = Math.round(Math.random() * (columns - 1));
     let imageIndex = Math.round(Math.random() * (foodImages.length - 1));
     let image = foodImages[imageIndex];
-    return { row, column, image }
+    if (checkPosition(row, column)) {
+        return { row, column, image }
+    } else {
+        console.log('место занято, еще одна попытка');
+        return generateFood();
+    }
+}
+
+function checkPosition(row, column) {
+    if (row === 0) return false;
+    for (let s of snake) {
+        if (s.row === row && s.column === column) {
+            return false;
+        }
+    }
+    return true;
 }
 
 function renderFood() {
